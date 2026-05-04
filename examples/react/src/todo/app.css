@@ -1,24 +1,38 @@
-/* used for things that should be hidden in the ui,
-but useful for people who use screen readers */
-.visually-hidden {
+/* added for drag-and-drop reorder */
+.todo-list li {
+    position: relative;
+}
+
+.drag-handle {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    background: transparent;
     border: 0;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    height: 1px;
-    width: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    position: absolute;
-    white-space: nowrap;
+    cursor: grab;
+    opacity: 0.6;
+    flex: 0 0 initial;
 }
 
-.toggle-all {
-    width: 40px !important;
-    height: 60px !important;
-    right: auto !important;
+.drag-handle:disabled {
+    cursor: not-allowed;
+    opacity: 0.2;
 }
 
-.toggle-all-label {
-    pointer-events: none;
+/* 6dot grip icon in the button */
+.drag-handle::before {
+    content: "⢶";
+    display: inline-block;
+    font-size: 16px;
+    line-height: 20px;
+    color: #666;
+}
+
+.drugging {
+    opacity: 0.5;
+}
+
+.drag-over {
+    outline: 2px dashed #aaa;
+    outline-offset: -2px;
 }
