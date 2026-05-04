@@ -3,9 +3,9 @@ import classnames from "classnames";
 
 import { Input } from "./input";
 
-import { TOGGLE_ITEM, REMOVE_ITEM, UPDATE_ITEM } from "../constants";
+import { TOGGLE_ITEM, REMOVE_ITEM, UPDATE_ITEM, REORDER_ITEMS } from "../constants";
 
-export const Item = memo(function Item({ todo, dispatch, index }) {
+export const Item = memo(function Item({ todo, dispatch, draggable, onDragStart, onDragOver, onDrop, onDragEnd, isDragging, isDragOver, index, visibleIds }) {
     const [isWritable, setIsWritable] = useState(false);
     const { title, completed, id } = todo;
 
@@ -33,20 +33,34 @@ export const Item = memo(function Item({ todo, dispatch, index }) {
         [id, removeItem, updateItem]
     );
 
+    const canDrag = draggable && !isWritable;
+
     return (
-        <li className={classnames({ completed: todo.completed })} data-testid="todo-item">
-            <div className="view">
+        <li className={classnames({ completed: todo.completed, dragging: isDragging, \"drag-over\": isDragOver })} data-testid="todo-item" >
+            <div className=\"view\">
                 {isWritable ? (
-                    <Input onSubmit={handleUpdate} label="Edit Todo Input" defaultValue={title} onBlur={handleBlur} />
+                    <Input onSubmit={handleUpdate} label=\"Edit Todo Input\" defaultValue={title} onBlur={handleBlur} />
                 ) : (
                     <>
-                        <input className="toggle" type="checkbox" data-testid="todo-item-toggle" checked={completed} onChange={toggleItem} />
-                        <label data-testid="todo-item-label" onDoubleClick={handleDoubleClick}>
-                            {title}
-                        </label>
-                        <button className="destroy" data-testid="todo-item-button" onClick={removeItem} />
+                      <button
+                          type=\"button\"
+                          className=\"drag-handle\"
+                            aria-label=\"Drag to reorder\"
+                          disabled={!canDrag}
+                            data-testid=\"todo-item-drag-handle\"
+                            draggable={canDrag}
+                            onDragStart={canDrag ? onDragStart : undefined}
+                          onDragOver={canDrag ? onDragOver : undefined}
+                          onDrop={canDrag ? onDrop : undefined}
+                          onDragEnd={canDrag ? onDragEnd : undefined}
+                          />
+                      <input className=\"toggle\" type=\"checkbox\" data-testid=\"todo-item-toggle\" checked={completed} onChange={toggleItem} />
+                      <label data-testid=\"todo-item-label\" onDoubleClick={handleDoubleClick}>
+                          {title}
+                      </label>
+                        <button className=\"destroy\" data-testid=\"todo-item-button\" onClick={removeItem} />
                     </>
-                )}
+                 )}
             </div>
         </li>
     );
