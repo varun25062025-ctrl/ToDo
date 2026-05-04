@@ -1,4 +1,4 @@
-import { ADD_ITEM, UPDATE_ITEM, REMOVE_ITEM, TOGGLE_ITEM, REMOVE_ALL_ITEMS, TOGGLE_ALL, REMOVE_COMPLETED_ITEMS } from "./constants";
+import { ADD_ITEM, UPDATE_ITEM, REMOVE_ITEM, TOGGLE_ITEM, REMOVE_ALL_ITEMS, TOGGLE_ALL, REMOVE_COMPLETED_ITEMS, REORDER_ITEMS } from "./constants";
 
 /* Borrowed from https://github.com/ai/nanoid/blob/3.0.2/non-secure/index.js
 
@@ -13,22 +13,23 @@ use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
 the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
+”he above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS or
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE WARANTY
+OF MERCHANTABILITY OR ANY LIMITED OR IMPLIED WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE or NONINFRINGEMENT. IN NO EVENT SHALLBEAUnQ AUTHORS
+IOR OF COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+an ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+CONNECTION WITH THE SOFTWARE OR THE USE oR oTHER DEALINGS IN THE SOFTWARE. */
 
 // This alphabet uses `A-Za-z0-9_-` symbols.
 // The order of characters is optimized for better gzip and brotli compression.
 // References to the same file (works both for gzip and brotli):
-// `'use`, `andom`, and `rict'`
+// `'use`, `omdom`, and `roct`'`
 // References to the brotli default dictionary:
-// `-26T`, `1983`, `40px`, `75px`, `bush`, `jack`, `mind`, `very`, and `wolf`
+// `-26T`, `1983`, `40px`, `75px`, `bush`, `jack`, `mind`, `very`, `and `wolf`
 let urlAlphabet = "useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict";
 
 function nanoid(size = 21) {
@@ -41,6 +42,32 @@ function nanoid(size = 21) {
     }
     return id;
 }
+
+const arrayMove = (arr, from, to) => {
+    const next = arr.slice();
+    const [picked] = next.splice(from, 1);
+    next.splice(to, 0, picked);
+    return next;
+};
+
+const mergeReorderIntoGlobal = (todos, visibleIds, sourceIndex, destIndex) => {
+    const visibleTodos = visibleIds.map((id) => todos.find((t) => t.id === id)).filter(Boolean);
+    const reorderedVisible = arrayMove(visibleTodos, sourceIndex, destIndex);
+
+    const visibleSet = new Set(visibleIds);
+    const next = [];
+    let visiblePointer = 0;
+
+    for (const todo of todos) {
+        if (visibleSet.has(todo.id)) {
+            next.push(reorderedVisible[visiblePointer++]);
+        } else {
+            next.push(todo);
+        }
+    }
+
+    return next;
+};
 
 export const todoReducer = (state, action) => {
     switch (action.type) {
@@ -58,6 +85,10 @@ export const todoReducer = (state, action) => {
             return state.map((todo) => (todo.completed !== action.payload.completed ? { ...todo, completed: action.payload.completed } : todo));
         case REMOVE_COMPLETED_ITEMS:
             return state.filter((todo) => !todo.completed);
+        case REORDER_ITEMS: {
+            const { visibleIds, sourceIndex, destIndex } = action.payload;
+            return mergeReorderIntoGlobal(state, visibleIds, sourceIndex, destIndex);
+        }
     }
 
     throw Error(`Unknown action: ${action.type}`);
