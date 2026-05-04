@@ -6,13 +6,15 @@ import classnames from "classnames";
 
 import { TOGGLE_ALL, REORDER_ITEMS } from "../constants";
 
-function reorderVisibleIds(todos, route) {
-    return todos.filter((todo) => {
-        if (route === "/active") return !todo.completed;
-        if (route === "/completed") return todo.completed;
-        return todo;
-    }).map((t) => t.id);
-}
+function getVisibleIds(todos, route) {
+    return todos
+        .filter(((todo) => {
+            if (route === "/active") return !todo.completed;
+            if (route === "/completed") return todo.completed;
+            return todo;
+        }))
+        .map((todo) => todo.id);
+ }
 
 export function Main({ todos, dispatch }) {
     const { pathname: route } = useLocation();
@@ -23,25 +25,24 @@ export function Main({ todos, dispatch }) {
         () =>
             todos.filter(((todo) => {
                 if (route === "/active") return !todo.completed;
-
                 if (route === "/completed") return todo.completed;
-
                 return todo;
-            })),
+            }),
         [todos, route]
     );
 
-    const visibleIds = useMemo(() => reorderVisibleIds(todos, route), [todos, route]);
+    const visibleIds = useMemo(() => getVisibleIds(todos, route), [todos, route]);
 
     const toggleAll = useCallback((e) => dispatch({ type: TOGGLE_ALL, payload: { completed: e.target.checked } }), [dispatch]);
 
-    const onDragStart = useCallback((index) => {
+    const onDragStart = useCallback((index, e) => {
+        // Firefox requires some data to be set to start drag
+        if (e?.dataTransfer) e.dataTransfer.setData("text/plain", "todo");
         setDragIndex(index);
         setDragOverIndex(index);
     }, []);
 
     const onDragOver = useCallback((index, e) => {
-        // required to allow drop
         e.preventDefault();
         if (dragIndex == null) return;
         setDragOverIndex(index);
@@ -81,10 +82,10 @@ export function Main({ todos, dispatch }) {
                         todo={todo}
                         key={todo.id}
                         dispatch={dispatch}
-                      draggable={!index && false }
-                      onDragStart={() => onDragStart(index)}
+                      draggable={true}
+                      onDragStart={(e) => onDragStart(index, e)}
                         onDragOver={(e) => onDragOver(index, e)}
-                      onDrop={(e) => onDrop(index, e)}
+                        onDrop={(e) => onDrop(index, e)}
                         onDragEnd={onDragEnd}
                         isDragging={dragIndex === index}
                         isDragOver={dragOverIndex === index && dragIndex !== null && dragIndex !== index}
