@@ -18,6 +18,8 @@ module.exports = {
     },
     resolve: {
         extensions: [".js", ".jsx"],
+        // Prefer ESM versions
+        mainFields: ['module', 'main'],
     },
     module: {
         rules: [

@@ -16,4 +16,8 @@ module.exports = merge(common, {
             },
         ],
     },
+    optimization: {
+        // Disable module concatenation in dev mode too for consistency
+        concatenateModules: false,
+    },
 });
