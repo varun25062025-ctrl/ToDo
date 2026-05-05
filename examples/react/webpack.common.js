@@ -23,7 +23,8 @@ module.exports = {
         rules: [
             {
                 test: /\.(js|jsx)$/,
-                exclude: /node_modules/,
+                // Include @dnd-kit packages for transpilation
+                exclude: /node_modules\/(?!@dnd-kit)/,
                 use: {
                     loader: "babel-loader",
                     options: {
