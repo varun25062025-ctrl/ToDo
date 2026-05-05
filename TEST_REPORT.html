@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDD Test Execution Report - Drag-and-Drop ToDo Reordering</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-card.total .value { color: #667eea; }
+        .stat-card.passed .value { color: #28a745; }
+        .stat-card.failed .value { color: #dc3545; }
+        .stat-card.pending .value { color: #ffc107; }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .test-scenario {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #ffc107;
+        }
+
+        .test-scenario.critical { border-left-color: #dc3545; }
+        .test-scenario.high { border-left-color: #fd7e14; }
+        .test-scenario.medium { border-left-color: #ffc107; }
+        .test-scenario.low { border-left-color: #17a2b8; }
+
+        .test-scenario h3 {
+            color: #333;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .test-scenario .meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge.priority-critical { background: #dc3545; color: white; }
+        .badge.priority-high { background: #fd7e14; color: white; }
+        .badge.priority-medium { background: #ffc107; color: #333; }
+        .badge.priority-low { background: #17a2b8; color: white; }
+
+        .badge.status-pending { background: #ffc107; color: #333; }
+        .badge.status-passed { background: #28a745; color: white; }
+        .badge.status-failed { background: #dc3545; color: white; }
+
+        .test-scenario p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 0.3s ease;
+        }
+
+        .coverage-matrix {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .coverage-matrix th,
+        .coverage-matrix td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .coverage-matrix th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .coverage-matrix tr:hover {
+            background: #f8f9fa;
+        }
+
+        .footer {
+            background: #343a40;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🧪 BDD Test Execution Report</h1>
+            <p>Drag-and-Drop ToDo Reordering Feature</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Project: EPMCDMETST | Date: May 5, 2026</p>
+        </div>
+
+        <!-- Statistics Grid -->
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <h3>Total Scenarios</h3>
+                <div class="value">15</div>
+            </div>
+            <div class="stat-card passed">
+                <h3>Passed</h3>
+                <div class="value">0</div>
+            </div>
+            <div class="stat-card failed">
+                <h3>Failed</h3>
+                <div class="value">0</div>
+            </div>
+            <div class="stat-card pending">
+                <h3>Pending</h3>
+                <div class="value">15</div>
+            </div>
+            <div class="stat-card">
+                <h3>Critical Priority</h3>
+                <div class="value" style="color: #dc3545;">2</div>
+            </div>
+            <div class="stat-card">
+                <h3>High Priority</h3>
+                <div class="value" style="color: #fd7e14;">10</div>
+            </div>
+            <div class="stat-card">
+                <h3>Medium Priority</h3>
+                <div class="value" style="color: #ffc107;">2</div>
+            </div>
+            <div class="stat-card">
+                <h3>Low Priority</h3>
+                <div class="value" style="color: #17a2b8;">1</div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="content">
+            <div class="section">
+                <h2>📊 Execution Progress</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;">0% Complete</div>
+                </div>
+                <p style="text-align: center; color: #666; margin-top: 10px;">
+                    <strong>Status:</strong> Ready for Execution (Awaiting Application Deployment)
+                </p>
+            </div>
+
+            <!-- Critical Priority Tests -->
+            <div class="section">
+                <h2>🔴 Critical Priority Tests (2)</h2>
+
+                <div class="test-scenario critical">
+                    <h3>TC001: Drag and drop to reorder items downward in All view</h3>
+                    <div class="meta">
+                        <span class="badge priority-critical">CRITICAL</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@Smoke</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@DragDrop</span>
+                    </div>
+                    <p><strong>Description:</strong> Validates basic downward drag-and-drop functionality where user drags first item and drops it after the last item.</p>
+                    <p><strong>Validation:</strong> Order should change correctly and persist in localStorage.</p>
+                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
+                </div>
+
+                <div class="test-scenario critical">
+                    <h3>TC002: Drag and drop to move item upward in All view</h3>
+                    <div class="meta">
+                        <span class="badge priority-critical">CRITICAL</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@Smoke</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@DragDrop</span>
+                    </div>
+                    <p><strong>Description:</strong> Validates upward drag-and-drop functionality where user drags last item and drops it before the first item.</p>
+                    <p><strong>Validation:</strong> Order should change correctly with items repositioned as expected.</p>
+                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
+                </div>
+            </div>
+
+            <!-- High Priority Tests -->
+            <div class="section">
+                <h2>🟠 High Priority Tests (10)</h2>
+
+                <div class="test-scenario high">
+                    <h3>TC003: Reorder items in Active view without affecting completed items</h3>
+                    <div class="meta">
+                        <span class="badge priority-high">HIGH</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@FilterSafe</span>
+                    </div>
+                    <p><strong>Description:</strong> Ensures reordering in Active filter doesn't affect Completed items order.</p>
+                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
+                </div>
+
+                <div class="test-scenario high">
+                    <h3>TC004: Drag handle is displayed for each todo item</h3>
+                    <div class="meta">
+                        <span class="badge priority-high">HIGH</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@Visual</span>
+                    </div>
+                    <p><strong>Description:</strong> Validates that drag handle (⋮⋮ icon) is visible for all todo items.</p>
+                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
+                </div>
+
+                <div class="test-scenario high">
+                    <h3>TC005: Dragging should only work via drag handle</h3>
+                    <div class="meta">
+                        <span class="badge priority-high">HIGH</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@Validation</span>
+                    </div>
+                    <p><strong>Description:</strong> Ensures dragging by text doesn't trigger reorder; only drag handle works.</p>
+                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
+                </div>
+
+                <div class="test-scenario high">
+                    <h3>TC006: Order is persisted after page reload</h3>
+                    <div class="meta">
+                        <span class="badge priority-high">HIGH</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@Persistence</span>
+                    </div>
+                    <p><strong>Description:</strong> Validates localStorage persistence across browser sessions.</p>
+                    <p><strong>Stories:</strong> EPMMCDMETST-40754</p>
+                </div>
+
+                <div class="test-scenario high">
+                    <h3>TC007: Migration of existing todos without order field</h3>
+                    <div class="meta">
+                        <span class="badge priority-high">HIGH</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@DataMigration</span>
+                    </div>
+                    <p><strong>Description:</strong> Ensures backward compatibility with legacy data without order field.</p>
+                    <p><strong>Stories:</strong> EPMMCDMETST-40754</p>
+                </div>
+
+                <div class="test-scenario high">
+                    <h3>TC008: Drag handle has correct ARIA labels</h3>
+                    <div class="meta">
+                        <span class="badge priority-high">HIGH</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@Accessibility</span>
+                    </div>
+                    <p><strong>Description:</strong> Validates ARIA labels for screen reader accessibility.</p>
+                    <p><strong>Stories:</strong> EPMMCDMETST-40749</p>
+                </div>
+
+                <div class="test-scenario high">
+                    <h3>TC009: Keyboard support for reordering</h3>
+                    <div class="meta">
+                        <span class="badge priority-high">HIGH</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@Keyboard</span>
+                    </div>
+                    <p><strong>Description:</strong> Validates keyboard navigation (Space + Arrow keys) for reordering.</p>
+                    <p><strong>Stories:</strong> EPMMCDMETST-40749</p>
+                </div>
+
+                <div class="test-scenario high">
+                    <h3>TC011: Adding new todo assigns next order value</h3>
+                    <div class="meta">
+                        <span class="badge priority-high">HIGH</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@CRUD</span>
+                    </div>
+                    <p><strong>Description:</strong> New todos should get correct order placement at the bottom.</p>
+                    <p><strong>Stories:</strong> EPMMCDMETST-40754</p>
+                </div>
+
+                <div class="test-scenario high">
+                    <h3>TC012: Deleting todo updates remaining order</h3>
+                    <div class="meta">
+                        <span class="badge priority-high">HIGH</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@CRUD</span>
+                    </div>
+                    <p><strong>Description:</strong> Order integrity maintained after item deletion.</p>
+                    <p><strong>Stories:</strong> EPMMCDMETST-40754</p>
+                </div>
+
+                <div class="test-scenario high">
+                    <h3>TC013: Visual feedback during drag operation</h3>
+                    <div class="meta">
+                        <span class="badge priority-high">HIGH</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@Visual</span>
+                    </div>
+                    <p><strong>Description:</strong> Validates drag preview and placeholder visibility during drag.</p>
+                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
+                </div>
+            </div>
+
+            <!-- Medium Priority Tests -->
+            <div class="section">
+                <h2>🟡 Medium Priority Tests (2)</h2>
+
+                <div class="test-scenario medium">
+                    <h3>TC010: Edge case handling for empty lists</h3>
+                    <div class="meta">
+                        <span class="badge priority-medium">MEDIUM</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@EdgeCase</span>
+                    </div>
+                    <p><strong>Description:</strong> Application behavior with no todos - no drag handles, no errors.</p>
+                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
+                </div>
+
+                <div class="test-scenario medium">
+                    <h3>TC014: Reorder items in Completed view</h3>
+                    <div class="meta">
+                        <span class="badge priority-medium">MEDIUM</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@FilterSafe</span>
+                    </div>
+                    <p><strong>Description:</strong> Reordering within Completed filter only affects completed items.</p>
+                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
+                </div>
+            </div>
+
+            <!-- Low Priority Tests -->
+            <div class="section">
+                <h2>🔵 Low Priority Tests (1)</h2>
+
+                <div class="test-scenario low">
+                    <h3>TC015: Data integrity validation after multiple operations</h3>
+                    <div class="meta">
+                        <span class="badge priority-low">LOW</span>
+                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge" style="background: #6c757d; color: white;">@Regression</span>
+                    </div>
+                    <p><strong>Description:</strong> Comprehensive workflow: Add → Drag → Complete → Delete → Drag again.</p>
+                    <p><strong>Stories:</strong> All Stories</p>
+                </div>
+            </div>
+
+            <!-- Traceability Matrix -->
+            <div class="section">
+                <h2>📋 Requirements Traceability Matrix</h2>
+                <table class="coverage-matrix">
+                    <thead>
+                        <tr>
+                            <th>Requirement</th>
+                            <th>Test Cases</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>FR-001: Basic Drag-Drop</td>
+                            <td>TC001, TC002</td>
+                            <td><span class="badge priority-critical">CRITICAL</span></td>
+                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>FR-002: Filter-Safe Reorder</td>
+                            <td>TC003, TC014</td>
+                            <td><span class="badge priority-high">HIGH</span></td>
+                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>FR-003: Persistence</td>
+                            <td>TC006</td>
+                            <td><span class="badge priority-high">HIGH</span></td>
+                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>FR-004: Visual Feedback</td>
+                            <td>TC004, TC013</td>
+                            <td><span class="badge priority-high">HIGH</span></td>
+                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>FR-005: Drag Handle Only</td>
+                            <td>TC005</td>
+                            <td><span class="badge priority-high">HIGH</span></td>
+                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>NFR-001: Accessibility</td>
+                            <td>TC008, TC009</td>
+                            <td><span class="badge priority-high">HIGH</span></td>
+                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>NFR-002: Data Migration</td>
+                            <td>TC007</td>
+                            <td><span class="badge priority-high">HIGH</span></td>
+                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>NFR-003: CRUD Operations</td>
+                            <td>TC011, TC012</td>
+                            <td><span class="badge priority-high">HIGH</span></td>
+                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>EDGE-001: Empty List</td>
+                            <td>TC010</td>
+                            <td><span class="badge priority-medium">MEDIUM</span></td>
+                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>REG-001: Data Integrity</td>
+                            <td>TC015</td>
+                            <td><span class="badge priority-low">LOW</span></td>
+                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- User Story Coverage -->
+            <div class="section">
+                <h2>📖 User Story Coverage</h2>
+                <table class="coverage-matrix">
+                    <thead>
+                        <tr>
+                            <th>Story ID</th>
+                            <th>Description</th>
+                            <th>Test Cases</th>
+                            <th>Coverage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>EPMCDMETST-40745</strong></td>
+                            <td>Drag-Drop UI Implementation</td>
+                            <td>TC001-TC005, TC013</td>
+                            <td>6 scenarios</td>
+                        </tr>
+                        <tr>
+                            <td><strong>EPMMCDMETST-40749</strong></td>
+                            <td>Accessibility & Keyboard</td>
+                            <td>TC008, TC009</td>
+                            <td>2 scenarios</td>
+                        </tr>
+                        <tr>
+                            <td><strong>EPMMCDMETST-40754</strong></td>
+                            <td>Persistence & Data Migration</td>
+                            <td>TC006, TC007, TC011, TC012</td>
+                            <td>4 scenarios</td>
+                        </tr>
+                        <tr>
+                            <td><strong>All Stories</strong></td>
+                            <td>Edge Cases & Regression</td>
+                            <td>TC010, TC014, TC015</td>
+                            <td>3 scenarios</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Test Execution Commands -->
+            <div class="section">
+                <h2>⚙️ Test Execution Commands</h2>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; font-family: monospace;">
+                    <p><strong># Run all tests:</strong></p>
+                    <p style="color: #667eea; margin: 10px 0;">mvn clean test</p>
+
+                    <p style="margin-top: 20px;"><strong># Run specific tags:</strong></p>
+                    <p style="color: #667eea; margin: 10px 0;">mvn clean test -Dcucumber.filter.tags="@Smoke"</p>
+                    <p style="color: #667eea; margin: 10px 0;">mvn clean test -Dcucumber.filter.tags="@Critical"</p>
+
+                    <p style="margin-top: 20px;"><strong># Generate HTML report:</strong></p>
+                    <p style="color: #667eea; margin: 10px 0;">mvn verify</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Test Framework:</strong> Selenium WebDriver 4.18.1 | Cucumber BDD 7.15.0 | JUnit 5.10.1</p>
+            <p style="margin-top: 10px;">Report Generated: May 5, 2026 | Version: 1.0</p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
+                © 2026 EPAM Systems | Project: EPMCDMETST
+            </p>
+        </div>
+    </div>
+</body>
+</html>
