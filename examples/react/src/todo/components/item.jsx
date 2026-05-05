@@ -44,7 +44,7 @@ export const Item = memo(function Item({ todo, dispatch, index }) {
         transition,
         isDragging
     } = useSortable({ 
-        id: id,
+        id: String(id), // Ensure ID is a string
         disabled: isWritable // Disable dragging while editing
     });
 
@@ -53,6 +53,9 @@ export const Item = memo(function Item({ todo, dispatch, index }) {
         transition,
         opacity: isDragging ? 0.5 : 1,
     };
+
+    // Conditionally apply listeners only when not editing
+    const dragHandleProps = isWritable ? {} : { ...listeners, ...attributes };
 
     return (
         <li 
@@ -67,12 +70,11 @@ export const Item = memo(function Item({ todo, dispatch, index }) {
             <div className="view">
                 {/* Drag handle - only active when not editing */}
                 <button
+                    type="button"
                     className="drag-handle"
-                    {...attributes}
-                    {...listeners}
+                    {...dragHandleProps}
                     disabled={isWritable}
                     aria-label={`Drag to reorder ${title}`}
-                    aria-disabled={isWritable}
                     tabIndex={isWritable ? -1 : 0}
                     style={{
                         cursor: isWritable ? 'not-allowed' : 'grab',
@@ -82,7 +84,8 @@ export const Item = memo(function Item({ todo, dispatch, index }) {
                         padding: '0 10px',
                         fontSize: '18px',
                         color: '#737373',
-                        touchAction: 'none'
+                        touchAction: 'none',
+                        userSelect: 'none'
                     }}
                 >
                     ☰
@@ -111,6 +114,7 @@ export const Item = memo(function Item({ todo, dispatch, index }) {
                             {title}
                         </label>
                         <button 
+                            type="button"
                             className="destroy" 
                             data-testid="todo-item-button" 
                             onClick={removeItem} 
