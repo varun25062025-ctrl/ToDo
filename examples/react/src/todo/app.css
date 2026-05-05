@@ -22,3 +22,33 @@ but useful for people who use screen readers */
 .toggle-all-label {
     pointer-events: none;
 }
+
+/* Drag and Drop Styles */
+.drag-handle {
+    cursor: grab;
+    touch-action: none;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.drag-handle:disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+
+.todo-list li.dragging {
+    opacity: 0.5;
+    z-index: 1000;
+}
+
+.todo-list li .view {
+    display: flex;
+    align-items: center;
+}
+
+.todo-list li .view .drag-handle {
+    flex-shrink: 0;
+    margin-right: 8px;
+}

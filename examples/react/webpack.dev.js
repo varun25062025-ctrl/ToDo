@@ -6,6 +6,7 @@ module.exports = merge(common, {
     devtool: "inline-source-map",
     devServer: {
         static: "./dist",
+        port: 8080,
     },
     module: {
         rules: [
@@ -14,5 +15,9 @@ module.exports = merge(common, {
                 use: ["style-loader", "css-loader"],
             },
         ],
+    },
+    optimization: {
+        // Disable module concatenation in dev mode too for consistency
+        concatenateModules: false,
     },
 });

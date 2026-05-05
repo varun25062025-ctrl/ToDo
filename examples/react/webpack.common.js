@@ -18,12 +18,15 @@ module.exports = {
     },
     resolve: {
         extensions: [".js", ".jsx"],
+        // Prefer ESM versions
+        mainFields: ['module', 'main'],
     },
     module: {
         rules: [
             {
                 test: /\.(js|jsx)$/,
-                exclude: /node_modules/,
+                // Include @dnd-kit packages for transpilation
+                exclude: /node_modules\/(?!@dnd-kit)/,
                 use: {
                     loader: "babel-loader",
                     options: {
