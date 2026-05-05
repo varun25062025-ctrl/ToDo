@@ -1,0 +1,231 @@
+BDD TEST CASES FOR DRAG-AND-DROP REORDERING - JIRA UPLOAD
+
+Project: EPMCDMETST
+Related Stories: EPMCDMETST-40745, EPMMCDMETST-40749, EPMMCDMETST-40754
+Test Framework: Selenium WebDriver + Cucumber BDD + JUnit 5
+Total Test Cases: 15
+
+=========================================
+TC001: Drag and drop to reorder items downward in All view
+=========================================
+Priority: High
+Tags: Smoke, DragDrop
+Description: Verify items can be reordered by dragging from top to bottom
+Steps:
+  1. Navigate to All view with 3 todo items
+  2. Drag first item by drag handle to last position
+  3. Verify new order and localStorage persistence
+Expected: Items reordered successfully (Read book, Write report, Buy groceries)
+
+=========================================
+TC002: Drag and drop to move item upward in All view
+=========================================
+Priority: High
+Tags: Smoke, DragDrop
+Description: Verify items can be reordered by dragging from bottom to top
+Steps:
+  1. Navigate to All view with 3 todo items
+  2. Drag last item to first position
+  3. Verify new order
+Expected: Items reordered successfully (Task C, Task A, Task B)
+
+=========================================
+TC003: Reorder items in Active view without affecting completed items
+=========================================
+Priority: High
+Tags: FilterSafe, Active
+Description: Verify filter-safe reordering preserves completed items position
+Steps:
+  1. Create mixed active and completed items
+  2. Switch to Active view
+  3. Reorder active items only
+  4. Verify completed items unchanged
+Expected: Only active items reordered, completed maintain position
+
+=========================================
+TC004: Drag only works from drag handle not from other elements
+=========================================
+Priority: High
+Tags: DragHandle, Validation
+Description: Verify drag constrained to drag handle only
+Steps:
+  1. Attempt drag by clicking checkbox - should fail
+  2. Attempt drag by clicking title - should fail
+  3. Drag by drag handle - should succeed
+Expected: Drag initiates only from drag handle
+
+=========================================
+TC005: Drag handle is disabled during inline edit mode
+=========================================
+Priority: High
+Tags: EditMode, DragDisabled
+Description: Verify drag disabled when item in edit mode
+Steps:
+  1. Double-click item to enter edit mode
+  2. Verify drag handle disabled
+  3. Verify aria-disabled attribute set to true
+Expected: Cannot drag during edit mode
+
+=========================================
+TC006: Order persists after page reload
+=========================================
+Priority: Critical
+Tags: Persistence, LocalStorage
+Description: Verify order persists across page reloads
+Steps:
+  1. Reorder items by drag and drop
+  2. Reload the page
+  3. Verify order maintained
+Expected: Reordered items maintain position after reload
+
+=========================================
+TC007: Migration assigns order to existing todos without order field
+=========================================
+Priority: High
+Tags: Persistence, Migration
+Description: Verify migration logic assigns order to legacy data
+Steps:
+  1. Load localStorage with todos lacking order field
+  2. Load application
+  3. Verify order field assigned to each todo
+  4. Verify migration persisted
+Expected: Legacy todos receive order field based on array index
+
+=========================================
+TC008: Drag handle has proper ARIA labels and attributes
+=========================================
+Priority: High
+Tags: Accessibility, ARIA
+Description: Verify accessibility attributes on drag handle
+Steps:
+  1. Inspect drag handle element
+  2. Verify role="button"
+  3. Verify tabIndex="0"
+  4. Verify aria-label contains task title
+Expected: Proper ARIA attributes present for screen readers
+
+=========================================
+TC009: Keyboard-based reordering using Move Up button
+=========================================
+Priority: Medium
+Tags: Accessibility, Keyboard
+Description: Verify keyboard alternative for reordering
+Steps:
+  1. Focus on third item
+  2. Click Move Up button
+  3. Verify item moved up one position
+  4. Verify focus maintained
+Expected: Keyboard reordering works, focus preserved
+
+=========================================
+TC010: Dragging item to its own position does not trigger reorder
+=========================================
+Priority: Low
+Tags: EdgeCase, DragToSamePosition
+Description: Verify no-op when dragging to same position
+Steps:
+  1. Drag item to its current position
+  2. Verify order unchanged
+  3. Verify no reorder action dispatched
+Expected: No unnecessary reorder operation
+
+=========================================
+TC011: New todo item is added at the end with correct order
+=========================================
+Priority: High
+Tags: CRUD, AddItem
+Description: Verify new items added at end maintain proper order
+Steps:
+  1. Create 2 existing items
+  2. Add new item
+  3. Verify new item at end
+  4. Verify existing items order unchanged
+Expected: New item appended at end with correct order value
+
+=========================================
+TC012: Deleting an item maintains proper order
+=========================================
+Priority: High
+Tags: CRUD, DeleteItem
+Description: Verify deletion maintains order integrity
+Steps:
+  1. Create 3 items
+  2. Delete middle item
+  3. Verify remaining items maintain proper sequential order
+  4. Verify persisted correctly
+Expected: Remaining items have proper normalized order values
+
+=========================================
+TC013: Visual feedback during drag operation
+=========================================
+Priority: Medium
+Tags: VisualFeedback
+Description: Verify visual feedback during drag operation
+Steps:
+  1. Start dragging an item
+  2. Verify "lifted" styling applied
+  3. Verify placeholder indicator appears
+  4. Release drag
+  5. Verify styling removed
+Expected: Clear visual feedback throughout drag operation
+
+=========================================
+TC014: Reorder in Completed view without affecting active items
+=========================================
+Priority: High
+Tags: FilterSafe, Completed
+Description: Verify filter-safe reordering in Completed view
+Steps:
+  1. Create mixed active and completed items
+  2. Switch to Completed view
+  3. Reorder completed items
+  4. Verify active items position unchanged
+Expected: Only completed items reordered
+
+=========================================
+TC015: Reordering does not duplicate or lose items
+=========================================
+Priority: Critical
+Tags: Validation, NoItemDuplication
+Description: Verify data integrity during reordering
+Steps:
+  1. Create 3 items
+  2. Perform multiple drag operations
+  3. Verify all items still present
+  4. Verify no duplicates exist
+  5. Verify unique IDs maintained
+Expected: All items present, no duplicates, stable keys
+
+=========================================
+COVERAGE SUMMARY
+=========================================
+- Total Scenarios: 15
+- Critical Priority: 2
+- High Priority: 10
+- Medium Priority: 2
+- Low Priority: 1
+
+Functional Areas:
+- Drag and Drop Operations: 2
+- Filter-Safe Reordering: 2
+- Drag Handle Validation: 2
+- Persistence: 2
+- CRUD Operations: 2
+- Accessibility: 2
+- Visual Feedback: 1
+- Edge Cases: 1
+- Data Integrity: 1
+
+Technology Stack:
+- Java 11
+- Selenium WebDriver 4.18.1
+- Cucumber 7.15.0
+- JUnit 5.10.1
+- Maven 3.x
+
+Repository: C:/Users/varun_gupta/Desktop/todo-dnd-testing
+Branch: feature/drag-drop-bdd-testing
+Commit: 4df5e13
+
+Execution Command: mvn clean test
+Report Location: target/cucumber-reports/cucumber-report.html
