@@ -5,7 +5,7 @@ Feature: Drag-and-Drop Reordering of ToDo Items
   So that I can organize my tasks according to my preferences
 
   Background:
-    Given the ToDo application is loaded at "http://localhost:3000"
+    Given the ToDo application is loaded at "http://localhost:8080"
     And the application has initialized with localStorage
 
   @TC001 @Smoke @DragDrop

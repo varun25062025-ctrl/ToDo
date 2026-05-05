@@ -44,6 +44,28 @@
             opacity: 0.9;
         }
 
+        .alert {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .alert h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .alert.error h3 {
+            color: #721c24;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -76,7 +98,7 @@
         .stat-card.total .value { color: #667eea; }
         .stat-card.passed .value { color: #28a745; }
         .stat-card.failed .value { color: #dc3545; }
-        .stat-card.pending .value { color: #ffc107; }
+        .stat-card.error .value { color: #ffc107; }
 
         .content {
             padding: 30px;
@@ -132,7 +154,7 @@
         .badge.priority-medium { background: #ffc107; color: #333; }
         .badge.priority-low { background: #17a2b8; color: white; }
 
-        .badge.status-pending { background: #ffc107; color: #333; }
+        .badge.status-error { background: #ffc107; color: #333; }
         .badge.status-passed { background: #28a745; color: white; }
         .badge.status-failed { background: #dc3545; color: white; }
 
@@ -152,13 +174,34 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #28a745, #20c997);
+            background: linear-gradient(90deg, #ffc107, #fd7e14);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
             transition: width 0.3s ease;
+        }
+
+        .execution-info {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .execution-info h3 {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+
+        .execution-info pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
         }
 
         .coverage-matrix {
@@ -208,7 +251,16 @@
         <div class="header">
             <h1>🧪 BDD Test Execution Report</h1>
             <p>Drag-and-Drop ToDo Reordering Feature</p>
-            <p style="font-size: 0.9em; margin-top: 10px;">Project: EPMCDMETST | Date: May 5, 2026</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Project: EPMCDMETST | Executed: May 5, 2026 16:56:13</p>
+        </div>
+
+        <!-- Alert Banner -->
+        <div class="alert error">
+            <h3>⚠️ Test Execution Status: BUILD FAILURE</h3>
+            <p><strong>Issue:</strong> All 15 test scenarios failed due to undefined step definitions.</p>
+            <p><strong>Root Cause:</strong> Step definition file contains only package declaration without implementations.</p>
+            <p><strong>Impact:</strong> Cannot execute browser automation until step definitions are implemented.</p>
+            <p><strong>Action Required:</strong> Implement 8 core step definitions in TodoStepDefinitions.java</p>
         </div>
 
         <!-- Statistics Grid -->
@@ -225,25 +277,17 @@
                 <h3>Failed</h3>
                 <div class="value">0</div>
             </div>
-            <div class="stat-card pending">
-                <h3>Pending</h3>
+            <div class="stat-card error">
+                <h3>Errors (Undefined)</h3>
                 <div class="value">15</div>
             </div>
             <div class="stat-card">
-                <h3>Critical Priority</h3>
-                <div class="value" style="color: #dc3545;">2</div>
+                <h3>Execution Time</h3>
+                <div class="value" style="color: #667eea; font-size: 1.8em;">5.6s</div>
             </div>
             <div class="stat-card">
-                <h3>High Priority</h3>
-                <div class="value" style="color: #fd7e14;">10</div>
-            </div>
-            <div class="stat-card">
-                <h3>Medium Priority</h3>
-                <div class="value" style="color: #ffc107;">2</div>
-            </div>
-            <div class="stat-card">
-                <h3>Low Priority</h3>
-                <div class="value" style="color: #17a2b8;">1</div>
+                <h3>Success Rate</h3>
+                <div class="value" style="color: #dc3545; font-size: 1.8em;">0%</div>
             </div>
         </div>
 
@@ -252,27 +296,68 @@
             <div class="section">
                 <h2>📊 Execution Progress</h2>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 0%;">0% Complete</div>
+                    <div class="progress-fill" style="width: 100%; background: linear-gradient(90deg, #ffc107, #fd7e14);">
+                        100% Executed (0% Passed)
+                    </div>
                 </div>
                 <p style="text-align: center; color: #666; margin-top: 10px;">
-                    <strong>Status:</strong> Ready for Execution (Awaiting Application Deployment)
+                    <strong>Status:</strong> All scenarios attempted but failed with UndefinedStepException
                 </p>
+            </div>
+
+            <!-- Execution Info -->
+            <div class="execution-info">
+                <h3>✅ Environment Configuration (Verified)</h3>
+                <pre>Java Version: 17.0.12 (Oracle Corporation)
+Maven Version: 3.9.9
+Selenium Version: 4.18.1
+Cucumber Version: 7.15.0
+Application URL: http://localhost:8080
+Application Status: ✓ Running (HTTP 200)
+Browser: Chrome/Firefox (WebDriver auto-managed)
+Build Command: mvn clean test
+Build Duration: 5.581 seconds
+Build Result: FAILURE</pre>
+            </div>
+
+            <!-- Root Cause -->
+            <div class="section">
+                <h2>🔍 Root Cause Analysis</h2>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <h3 style="color: #dc3545; margin-bottom: 15px;">Missing Step Implementations</h3>
+                    <p style="margin-bottom: 15px;">
+                        The test framework infrastructure is correctly configured and all dependencies are resolved.
+                        However, the step definition file <code>TodoStepDefinitions.java</code> contains only a package
+                        declaration and comments without actual method implementations.
+                    </p>
+                    <h4 style="margin-top: 20px; margin-bottom: 10px;">Required Step Definitions (8 core steps):</h4>
+                    <ol style="padding-left: 20px; line-height: 1.8;">
+                        <li><code>@Given("the ToDo application is loaded at {string}")</code></li>
+                        <li><code>@Given("the application has initialized with localStorage")</code></li>
+                        <li><code>@Given("I am on the {string} view")</code></li>
+                        <li><code>@Given("I have the following todo items:")</code></li>
+                        <li><code>@When("I drag {string} by the drag handle")</code></li>
+                        <li><code>@When("I drop it after {string}")</code></li>
+                        <li><code>@Then("the todo items should be displayed in the following order:")</code></li>
+                        <li><code>@Then("the order should be persisted in localStorage")</code></li>
+                    </ol>
+                </div>
             </div>
 
             <!-- Critical Priority Tests -->
             <div class="section">
-                <h2>🔴 Critical Priority Tests (2)</h2>
+                <h2>🔴 Critical Priority Tests (0/2 Passed)</h2>
 
                 <div class="test-scenario critical">
                     <h3>TC001: Drag and drop to reorder items downward in All view</h3>
                     <div class="meta">
                         <span class="badge priority-critical">CRITICAL</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge status-error">❌ ERROR</span>
                         <span class="badge" style="background: #6c757d; color: white;">@Smoke</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@DragDrop</span>
+                        <span class="badge" style="background: #6c757d; color: white;">Time: 0.111s</span>
                     </div>
-                    <p><strong>Description:</strong> Validates basic downward drag-and-drop functionality where user drags first item and drops it after the last item.</p>
-                    <p><strong>Validation:</strong> Order should change correctly and persist in localStorage.</p>
+                    <p><strong>Error:</strong> UndefinedStepException - 8 steps undefined</p>
+                    <p><strong>Description:</strong> Validates basic downward drag-and-drop functionality.</p>
                     <p><strong>Stories:</strong> EPMCDMETST-40745</p>
                 </div>
 
@@ -280,313 +365,170 @@
                     <h3>TC002: Drag and drop to move item upward in All view</h3>
                     <div class="meta">
                         <span class="badge priority-critical">CRITICAL</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
+                        <span class="badge status-error">❌ ERROR</span>
                         <span class="badge" style="background: #6c757d; color: white;">@Smoke</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@DragDrop</span>
+                        <span class="badge" style="background: #6c757d; color: white;">Time: 0.025s</span>
                     </div>
-                    <p><strong>Description:</strong> Validates upward drag-and-drop functionality where user drags last item and drops it before the first item.</p>
-                    <p><strong>Validation:</strong> Order should change correctly with items repositioned as expected.</p>
+                    <p><strong>Error:</strong> UndefinedStepException - 7 steps undefined</p>
+                    <p><strong>Description:</strong> Validates upward drag-and-drop functionality.</p>
                     <p><strong>Stories:</strong> EPMCDMETST-40745</p>
                 </div>
             </div>
 
             <!-- High Priority Tests -->
             <div class="section">
-                <h2>🟠 High Priority Tests (10)</h2>
+                <h2>🟠 High Priority Tests (0/10 Passed)</h2>
+                <p style="margin-bottom: 20px; color: #666;">All 10 high priority scenarios failed with UndefinedStepException</p>
 
                 <div class="test-scenario high">
                     <h3>TC003: Reorder items in Active view without affecting completed items</h3>
                     <div class="meta">
                         <span class="badge priority-high">HIGH</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@FilterSafe</span>
+                        <span class="badge status-error">❌ ERROR</span>
+                        <span class="badge" style="background: #6c757d; color: white;">11 steps undefined</span>
                     </div>
-                    <p><strong>Description:</strong> Ensures reordering in Active filter doesn't affect Completed items order.</p>
                     <p><strong>Stories:</strong> EPMCDMETST-40745</p>
                 </div>
 
                 <div class="test-scenario high">
-                    <h3>TC004: Drag handle is displayed for each todo item</h3>
+                    <h3>TC004-TC009, TC011-TC013: Additional High Priority Tests</h3>
                     <div class="meta">
                         <span class="badge priority-high">HIGH</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@Visual</span>
+                        <span class="badge status-error">❌ ERROR (9 scenarios)</span>
                     </div>
-                    <p><strong>Description:</strong> Validates that drag handle (⋮⋮ icon) is visible for all todo items.</p>
-                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
-                </div>
-
-                <div class="test-scenario high">
-                    <h3>TC005: Dragging should only work via drag handle</h3>
-                    <div class="meta">
-                        <span class="badge priority-high">HIGH</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@Validation</span>
-                    </div>
-                    <p><strong>Description:</strong> Ensures dragging by text doesn't trigger reorder; only drag handle works.</p>
-                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
-                </div>
-
-                <div class="test-scenario high">
-                    <h3>TC006: Order is persisted after page reload</h3>
-                    <div class="meta">
-                        <span class="badge priority-high">HIGH</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@Persistence</span>
-                    </div>
-                    <p><strong>Description:</strong> Validates localStorage persistence across browser sessions.</p>
-                    <p><strong>Stories:</strong> EPMMCDMETST-40754</p>
-                </div>
-
-                <div class="test-scenario high">
-                    <h3>TC007: Migration of existing todos without order field</h3>
-                    <div class="meta">
-                        <span class="badge priority-high">HIGH</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@DataMigration</span>
-                    </div>
-                    <p><strong>Description:</strong> Ensures backward compatibility with legacy data without order field.</p>
-                    <p><strong>Stories:</strong> EPMMCDMETST-40754</p>
-                </div>
-
-                <div class="test-scenario high">
-                    <h3>TC008: Drag handle has correct ARIA labels</h3>
-                    <div class="meta">
-                        <span class="badge priority-high">HIGH</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@Accessibility</span>
-                    </div>
-                    <p><strong>Description:</strong> Validates ARIA labels for screen reader accessibility.</p>
-                    <p><strong>Stories:</strong> EPMMCDMETST-40749</p>
-                </div>
-
-                <div class="test-scenario high">
-                    <h3>TC009: Keyboard support for reordering</h3>
-                    <div class="meta">
-                        <span class="badge priority-high">HIGH</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@Keyboard</span>
-                    </div>
-                    <p><strong>Description:</strong> Validates keyboard navigation (Space + Arrow keys) for reordering.</p>
-                    <p><strong>Stories:</strong> EPMMCDMETST-40749</p>
-                </div>
-
-                <div class="test-scenario high">
-                    <h3>TC011: Adding new todo assigns next order value</h3>
-                    <div class="meta">
-                        <span class="badge priority-high">HIGH</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@CRUD</span>
-                    </div>
-                    <p><strong>Description:</strong> New todos should get correct order placement at the bottom.</p>
-                    <p><strong>Stories:</strong> EPMMCDMETST-40754</p>
-                </div>
-
-                <div class="test-scenario high">
-                    <h3>TC012: Deleting todo updates remaining order</h3>
-                    <div class="meta">
-                        <span class="badge priority-high">HIGH</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@CRUD</span>
-                    </div>
-                    <p><strong>Description:</strong> Order integrity maintained after item deletion.</p>
-                    <p><strong>Stories:</strong> EPMMCDMETST-40754</p>
-                </div>
-
-                <div class="test-scenario high">
-                    <h3>TC013: Visual feedback during drag operation</h3>
-                    <div class="meta">
-                        <span class="badge priority-high">HIGH</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@Visual</span>
-                    </div>
-                    <p><strong>Description:</strong> Validates drag preview and placeholder visibility during drag.</p>
-                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
+                    <p>Drag handle visibility, validation, persistence, data migration, accessibility, CRUD operations, and visual feedback tests</p>
+                    <p><strong>Common Error:</strong> UndefinedStepException (5-11 steps per scenario)</p>
+                    <p><strong>Stories:</strong> EPMCDMETST-40745, EPMMCDMETST-40749, EPMMCDMETST-40754</p>
                 </div>
             </div>
 
-            <!-- Medium Priority Tests -->
+            <!-- Medium & Low Priority Tests -->
             <div class="section">
-                <h2>🟡 Medium Priority Tests (2)</h2>
+                <h2>🟡 Medium Priority Tests (0/2 Passed)</h2>
 
                 <div class="test-scenario medium">
                     <h3>TC010: Edge case handling for empty lists</h3>
                     <div class="meta">
                         <span class="badge priority-medium">MEDIUM</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@EdgeCase</span>
+                        <span class="badge status-error">❌ ERROR</span>
                     </div>
-                    <p><strong>Description:</strong> Application behavior with no todos - no drag handles, no errors.</p>
-                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
+                    <p><strong>Error:</strong> 5 steps undefined | Time: 0.021s</p>
                 </div>
 
                 <div class="test-scenario medium">
                     <h3>TC014: Reorder items in Completed view</h3>
                     <div class="meta">
                         <span class="badge priority-medium">MEDIUM</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@FilterSafe</span>
+                        <span class="badge status-error">❌ ERROR</span>
                     </div>
-                    <p><strong>Description:</strong> Reordering within Completed filter only affects completed items.</p>
-                    <p><strong>Stories:</strong> EPMCDMETST-40745</p>
+                    <p><strong>Error:</strong> 10 steps undefined | Time: 0.023s</p>
                 </div>
             </div>
 
-            <!-- Low Priority Tests -->
             <div class="section">
-                <h2>🔵 Low Priority Tests (1)</h2>
+                <h2>🔵 Low Priority Tests (0/1 Passed)</h2>
 
                 <div class="test-scenario low">
                     <h3>TC015: Data integrity validation after multiple operations</h3>
                     <div class="meta">
                         <span class="badge priority-low">LOW</span>
-                        <span class="badge status-pending">⏳ PENDING</span>
-                        <span class="badge" style="background: #6c757d; color: white;">@Regression</span>
+                        <span class="badge status-error">❌ ERROR</span>
                     </div>
-                    <p><strong>Description:</strong> Comprehensive workflow: Add → Drag → Complete → Delete → Drag again.</p>
-                    <p><strong>Stories:</strong> All Stories</p>
+                    <p><strong>Error:</strong> 10 steps undefined | Time: 0.024s</p>
                 </div>
             </div>
 
-            <!-- Traceability Matrix -->
+            <!-- Test Results Summary -->
             <div class="section">
-                <h2>📋 Requirements Traceability Matrix</h2>
+                <h2>📈 Results Summary by Priority</h2>
                 <table class="coverage-matrix">
                     <thead>
                         <tr>
-                            <th>Requirement</th>
-                            <th>Test Cases</th>
                             <th>Priority</th>
-                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Passed</th>
+                            <th>Failed</th>
+                            <th>Errors</th>
+                            <th>Success Rate</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>FR-001: Basic Drag-Drop</td>
-                            <td>TC001, TC002</td>
                             <td><span class="badge priority-critical">CRITICAL</span></td>
-                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>2</td>
+                            <td>0%</td>
                         </tr>
                         <tr>
-                            <td>FR-002: Filter-Safe Reorder</td>
-                            <td>TC003, TC014</td>
                             <td><span class="badge priority-high">HIGH</span></td>
-                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                            <td>10</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>10</td>
+                            <td>0%</td>
                         </tr>
                         <tr>
-                            <td>FR-003: Persistence</td>
-                            <td>TC006</td>
-                            <td><span class="badge priority-high">HIGH</span></td>
-                            <td><span class="badge status-pending">⏳ Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td>FR-004: Visual Feedback</td>
-                            <td>TC004, TC013</td>
-                            <td><span class="badge priority-high">HIGH</span></td>
-                            <td><span class="badge status-pending">⏳ Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td>FR-005: Drag Handle Only</td>
-                            <td>TC005</td>
-                            <td><span class="badge priority-high">HIGH</span></td>
-                            <td><span class="badge status-pending">⏳ Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td>NFR-001: Accessibility</td>
-                            <td>TC008, TC009</td>
-                            <td><span class="badge priority-high">HIGH</span></td>
-                            <td><span class="badge status-pending">⏳ Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td>NFR-002: Data Migration</td>
-                            <td>TC007</td>
-                            <td><span class="badge priority-high">HIGH</span></td>
-                            <td><span class="badge status-pending">⏳ Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td>NFR-003: CRUD Operations</td>
-                            <td>TC011, TC012</td>
-                            <td><span class="badge priority-high">HIGH</span></td>
-                            <td><span class="badge status-pending">⏳ Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td>EDGE-001: Empty List</td>
-                            <td>TC010</td>
                             <td><span class="badge priority-medium">MEDIUM</span></td>
-                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>2</td>
+                            <td>0%</td>
                         </tr>
                         <tr>
-                            <td>REG-001: Data Integrity</td>
-                            <td>TC015</td>
                             <td><span class="badge priority-low">LOW</span></td>
-                            <td><span class="badge status-pending">⏳ Pending</span></td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr style="background: #f8f9fa; font-weight: bold;">
+                            <td>TOTAL</td>
+                            <td>15</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>15</td>
+                            <td style="color: #dc3545;">0%</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <!-- User Story Coverage -->
+            <!-- Next Steps -->
             <div class="section">
-                <h2>📖 User Story Coverage</h2>
-                <table class="coverage-matrix">
-                    <thead>
-                        <tr>
-                            <th>Story ID</th>
-                            <th>Description</th>
-                            <th>Test Cases</th>
-                            <th>Coverage</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>EPMCDMETST-40745</strong></td>
-                            <td>Drag-Drop UI Implementation</td>
-                            <td>TC001-TC005, TC013</td>
-                            <td>6 scenarios</td>
-                        </tr>
-                        <tr>
-                            <td><strong>EPMMCDMETST-40749</strong></td>
-                            <td>Accessibility & Keyboard</td>
-                            <td>TC008, TC009</td>
-                            <td>2 scenarios</td>
-                        </tr>
-                        <tr>
-                            <td><strong>EPMMCDMETST-40754</strong></td>
-                            <td>Persistence & Data Migration</td>
-                            <td>TC006, TC007, TC011, TC012</td>
-                            <td>4 scenarios</td>
-                        </tr>
-                        <tr>
-                            <td><strong>All Stories</strong></td>
-                            <td>Edge Cases & Regression</td>
-                            <td>TC010, TC014, TC015</td>
-                            <td>3 scenarios</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Test Execution Commands -->
-            <div class="section">
-                <h2>⚙️ Test Execution Commands</h2>
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; font-family: monospace;">
-                    <p><strong># Run all tests:</strong></p>
-                    <p style="color: #667eea; margin: 10px 0;">mvn clean test</p>
-
-                    <p style="margin-top: 20px;"><strong># Run specific tags:</strong></p>
-                    <p style="color: #667eea; margin: 10px 0;">mvn clean test -Dcucumber.filter.tags="@Smoke"</p>
-                    <p style="color: #667eea; margin: 10px 0;">mvn clean test -Dcucumber.filter.tags="@Critical"</p>
-
-                    <p style="margin-top: 20px;"><strong># Generate HTML report:</strong></p>
-                    <p style="color: #667eea; margin: 10px 0;">mvn verify</p>
+                <h2>🎯 Next Steps to Resolve</h2>
+                <div style="background: #fff3cd; padding: 20px; border-radius: 8px; border-left: 5px solid #ffc107;">
+                    <h3 style="margin-bottom: 15px;">Immediate Actions Required:</h3>
+                    <ol style="padding-left: 20px; line-height: 2;">
+                        <li><strong>Implement Step Definitions</strong> - Create all 8 core step implementations in TodoStepDefinitions.java</li>
+                        <li><strong>Complete Page Object Methods</strong> - Add drag-drop, navigation, and verification methods to TodoPage.java</li>
+                        <li><strong>Add Element Locators</strong> - Define CSS/XPath selectors for all UI elements</li>
+                        <li><strong>Re-run Tests</strong> - Execute: <code>mvn clean test</code></li>
+                        <li><strong>Generate Report</strong> - Create HTML report: <code>mvn verify</code></li>
+                    </ol>
+                    <p style="margin-top: 20px;"><strong>Estimated Implementation Time:</strong> 9-13 hours</p>
                 </div>
+            </div>
+
+            <!-- Surefire Reports -->
+            <div class="section">
+                <h2>📄 Detailed Reports</h2>
+                <p><strong>Surefire Reports Location:</strong></p>
+                <ul style="padding-left: 20px; line-height: 1.8;">
+                    <li>XML Report: <code>target/surefire-reports/TEST-com.todo.runners.TestRunner.xml</code></li>
+                    <li>Text Report: <code>target/surefire-reports/com.todo.runners.TestRunner.txt</code></li>
+                    <li>Markdown Summary: <code>ACTUAL_TEST_RESULTS.md</code></li>
+                </ul>
             </div>
         </div>
 
         <!-- Footer -->
         <div class="footer">
             <p><strong>Test Framework:</strong> Selenium WebDriver 4.18.1 | Cucumber BDD 7.15.0 | JUnit 5.10.1</p>
-            <p style="margin-top: 10px;">Report Generated: May 5, 2026 | Version: 1.0</p>
+            <p style="margin-top: 10px;">Report Generated: May 5, 2026 16:56:13 | Build: FAILURE</p>
             <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
                 © 2026 EPAM Systems | Project: EPMCDMETST
             </p>

@@ -1,19 +1,14 @@
 package com.todo.stepdefinitions;
 
 import com.todo.utils.DriverManager;
-import com.todo.utils.TestContext;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 
 public class Hooks {
-    private TestContext context;
-
-    public Hooks(TestContext context) {
-        this.context = context;
-    }
 
     @Before
     public void beforeScenario(Scenario scenario) {
@@ -22,11 +17,19 @@ public class Hooks {
 
     @After
     public void afterScenario(Scenario scenario) {
-        if (scenario.isFailed()) {
-            byte[] screenshot = ((TakesScreenshot) context.getDriver()).getScreenshotAs(OutputType.BYTES);
-            scenario.attach(screenshot, "image/png", "Failed Screenshot");
+        try {
+            if (scenario.isFailed()) {
+                WebDriver driver = DriverManager.getDriver();
+                if (driver != null) {
+                    byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+                    scenario.attach(screenshot, "image/png", "Failed Screenshot");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Could not take screenshot: " + e.getMessage());
+        } finally {
+            DriverManager.quitDriver();
+            System.out.println("Finished scenario: " + scenario.getName());
         }
-        DriverManager.quitDriver();
-        System.out.println("Finished scenario: " + scenario.getName());
     }
 }
