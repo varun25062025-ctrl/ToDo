@@ -18,3 +18,32 @@
 .toggle-graph:focus svg path {
     fill: black;
 }
+
+/* Drag and Drop Styles */
+.drag-handle {
+    cursor: move;
+    padding: 0 10px;
+    color: #ccc;
+    font-size: 18px;
+    line-height: 1;
+    display: inline-block;
+    user-select: none;
+    margin-right: 5px;
+}
+
+.drag-handle:hover {
+    color: #777;
+}
+
+li.dragging {
+    opacity: 0.4;
+    background: #f5f5f5;
+}
+
+li.drag-over {
+    border-top: 2px solid #4d4d4d;
+}
+
+.todo-list li {
+    transition: transform 0.2s ease;
+}

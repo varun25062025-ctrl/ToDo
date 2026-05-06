@@ -1,4 +1,5 @@
-import { ADD_ITEM, UPDATE_ITEM, REMOVE_ITEM, TOGGLE_ITEM, REMOVE_ALL_ITEMS, TOGGLE_ALL, REMOVE_COMPLETED_ITEMS } from "./constants";
+import { ADD_ITEM, UPDATE_ITEM, REMOVE_ITEM, TOGGLE_ITEM, REMOVE_ALL_ITEMS, TOGGLE_ALL, REMOVE_COMPLETED_ITEMS, REORDER_ITEMS } from "./constants";
+import { arrayMove } from "@dnd-kit/sortable";
 
 /* Borrowed from https://github.com/ai/nanoid/blob/3.0.2/non-secure/index.js
 
@@ -45,7 +46,8 @@ function nanoid(size = 21) {
 export const todoReducer = (state, action) => {
     switch (action.type) {
         case ADD_ITEM:
-            return state.concat({ id: nanoid(), title: action.payload.title, completed: false });
+            const maxOrder = state.length > 0 ? Math.max(...state.map(t => t.order || 0)) : 0;
+            return state.concat({ id: nanoid(), title: action.payload.title, completed: false, order: maxOrder + 1 });
         case UPDATE_ITEM:
             return state.map((todo) => (todo.id === action.payload.id ? { ...todo, title: action.payload.title } : todo));
         case REMOVE_ITEM:
@@ -58,6 +60,13 @@ export const todoReducer = (state, action) => {
             return state.map((todo) => (todo.completed !== action.payload.completed ? { ...todo, completed: action.payload.completed } : todo));
         case REMOVE_COMPLETED_ITEMS:
             return state.filter((todo) => !todo.completed);
+        case REORDER_ITEMS:
+            const { activeId, overId } = action.payload;
+            const oldIndex = state.findIndex(t => t.id === activeId);
+            const newIndex = state.findIndex(t => t.id === overId);
+
+            const reordered = arrayMove(state, oldIndex, newIndex);
+            return reordered.map((todo, index) => ({ ...todo, order: index }));
     }
 
     throw Error(`Unknown action: ${action.type}`);

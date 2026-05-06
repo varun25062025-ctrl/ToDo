@@ -89,8 +89,6 @@ export default class View {
 
         this.render = this.render.bind(this);
         this.bindCallback = this.bindCallback.bind(this);
-        
-        this.draggedElement = null;
     }
 
     _clearCompletedButton(completedCount, visible) {
@@ -133,9 +131,6 @@ export default class View {
                 break;
             case "clearCompletedButton":
                 this._clearCompletedButton(parameter.completed, parameter.visible, this.clearCompletedButton);
-                break;
-            case "itemReorder":
-                this._setupDragAndDrop(handler);
                 break;
         }
     }
@@ -187,76 +182,5 @@ export default class View {
                 });
                 break;
         }
-    }
-    
-    _setupDragAndDrop(handler) {
-        $delegate(this.$todoList, "li", "dragstart", (e) => {
-            this.draggedElement = e.target;
-            e.target.classList.add("dragging");
-            e.dataTransfer.effectAllowed = "move";
-            e.dataTransfer.setData("text/html", e.target.innerHTML);
-        });
-        
-        $delegate(this.$todoList, "li", "dragend", (e) => {
-            e.target.classList.remove("dragging");
-            
-            qsa("li", this.$todoList).forEach(item => {
-                item.classList.remove("drag-over");
-            });
-            
-            const items = qsa("li", this.$todoList);
-            const newOrder = [];
-            
-            items.forEach((item, index) => {
-                newOrder.push({
-                    id: parseInt(item.dataset.id, 10),
-                    order: index
-                });
-            });
-            
-            handler({ newOrder });
-            
-            this.draggedElement = null;
-        });
-        
-        $delegate(this.$todoList, "li", "dragover", (e) => {
-            if (e.preventDefault) {
-                e.preventDefault();
-            }
-            e.dataTransfer.dropEffect = "move";
-            
-            const afterElement = this._getDragAfterElement(this.$todoList, e.clientY);
-            const draggable = this.draggedElement;
-            
-            if (afterElement == null) {
-                this.$todoList.appendChild(draggable);
-            } else {
-                this.$todoList.insertBefore(draggable, afterElement);
-            }
-            
-            return false;
-        });
-        
-        $delegate(this.$todoList, "li", "drop", (e) => {
-            if (e.stopPropagation) {
-                e.stopPropagation();
-            }
-            return false;
-        });
-    }
-    
-    _getDragAfterElement(container, y) {
-        const draggableElements = [...qsa("li:not(.dragging)", container)];
-        
-        return draggableElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = y - box.top - box.height / 2;
-            
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 }

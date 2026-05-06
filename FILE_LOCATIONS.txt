@@ -1,0 +1,32 @@
+DRAG AND DROP IMPLEMENTATION - FILE LOCATIONS
+=============================================
+
+Repository Root: /c/Users/varun_gupta/Desktop/ToDo-work
+
+MODIFIED SOURCE FILES:
+---------------------------------------------
+/c/Users/varun_gupta/Desktop/ToDo-work/examples/javascript-es6/src/template.js
+/c/Users/varun_gupta/Desktop/ToDo-work/examples/javascript-es6/src/view.js
+/c/Users/varun_gupta/Desktop/ToDo-work/examples/javascript-es6/src/controller.js
+/c/Users/varun_gupta/Desktop/ToDo-work/examples/javascript-es6/src/model.js
+/c/Users/varun_gupta/Desktop/ToDo-work/examples/javascript-es6/src/app.css
+/c/Users/varun_gupta/Desktop/ToDo-work/examples/javascript-es6/src/index.html
+
+NEW DOCUMENTATION FILES:
+---------------------------------------------
+/c/Users/varun_gupta/Desktop/ToDo-work/examples/javascript-es6/DRAG_DROP_README.md
+/c/Users/varun_gupta/Desktop/ToDo-work/PR_INSTRUCTIONS.md
+/c/Users/varun_gupta/Desktop/ToDo-work/pr-body.md
+/c/Users/varun_gupta/Desktop/ToDo-work/IMPLEMENTATION_SUMMARY.md
+/c/Users/varun_gupta/Desktop/ToDo-work/FINAL_SUMMARY.txt
+/c/Users/varun_gupta/Desktop/ToDo-work/FILE_LOCATIONS.txt
+
+BRANCH INFORMATION:
+---------------------------------------------
+Repository: https://github.com/varun25062025-ctrl/ToDo
+Branch: feature/vertical-drag-drop-reordering
+Commit: a849d8d4d79a479984990f5c36f44452e551264a
+
+PULL REQUEST URL:
+---------------------------------------------
+https://github.com/varun25062025-ctrl/ToDo/pull/new/feature/vertical-drag-drop-reordering

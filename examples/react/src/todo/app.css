@@ -22,3 +22,43 @@ but useful for people who use screen readers */
 .toggle-all-label {
     pointer-events: none;
 }
+
+/* Drag handle */
+.drag-handle {
+    cursor: move;
+    padding: 0 10px;
+    color: #ccc;
+    font-size: 18px;
+    line-height: 1;
+    display: inline-block;
+    user-select: none;
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.drag-handle:hover {
+    color: #777;
+}
+
+.drag-handle:focus {
+    outline: 2px solid #4d4d4d;
+    outline-offset: 2px;
+}
+
+/* Dragging state */
+li.dragging {
+    opacity: 0.4;
+    background: #f5f5f5;
+}
+
+/* Smooth transitions */
+.todo-list li {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Disabled drag handle during edit */
+.drag-handle[aria-disabled="true"] {
+    cursor: not-allowed;
+    color: #e6e6e6;
+    pointer-events: none;
+}
