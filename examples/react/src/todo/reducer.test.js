@@ -107,6 +107,42 @@ describe("todoReducer", () => {
         expect(next).toEqual(baseTodos);
     });
 
+    it("returns unchanged state when dragged and target ids are the same", () => {
+        const next = todoReducer(baseTodos, {
+            type: REORDER_ITEMS,
+            payload: {
+                visibleIds: ["a", "b", "c"],
+                draggedId: "b",
+                targetId: "b",
+            },
+        });
+
+        expect(next).toEqual(baseTodos);
+    });
+
+    it("returns unchanged state when dragged or target ids are missing", () => {
+        const missingDragged = todoReducer(baseTodos, {
+            type: REORDER_ITEMS,
+            payload: {
+                visibleIds: ["a", "b", "c"],
+                draggedId: null,
+                targetId: "a",
+            },
+        });
+
+        const missingTarget = todoReducer(baseTodos, {
+            type: REORDER_ITEMS,
+            payload: {
+                visibleIds: ["a", "b", "c"],
+                draggedId: "a",
+                targetId: null,
+            },
+        });
+
+        expect(missingDragged).toEqual(baseTodos);
+        expect(missingTarget).toEqual(baseTodos);
+    });
+
     it("throws for unknown actions", () => {
         expect(() => todoReducer(baseTodos, { type: "UNKNOWN_ACTION" })).toThrow("Unknown action: UNKNOWN_ACTION");
     });
