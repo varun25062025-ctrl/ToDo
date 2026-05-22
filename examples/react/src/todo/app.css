@@ -22,3 +22,27 @@ but useful for people who use screen readers */
 .toggle-all-label {
     pointer-events: none;
 }
+
+.todo-list li {
+    transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+}
+
+.todo-list li.dragging {
+    opacity: 0.45;
+}
+
+.todo-list li.drop-target {
+    background: #fff7d6;
+}
+
+.drag-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    margin-right: 8px;
+    color: #8a8a8a;
+    cursor: grab;
+    font-size: 14px;
+    line-height: 1;
+}
