@@ -37,6 +37,7 @@ export const Item = memo(function Item({ todo, dispatch, isDragging, isDropTarge
         <li
             className={classnames({
                 completed: todo.completed,
+                editing: isWritable,
                 dragging: isDragging,
                 "drop-target": isDropTarget
             })}
@@ -49,7 +50,13 @@ export const Item = memo(function Item({ todo, dispatch, isDragging, isDropTarge
         >
             <div className="view">
                 {!isWritable && (
-                    <span className="drag-handle" aria-hidden="true" title="Drag to reorder">
+                    <span
+                        className="drag-handle"
+                        aria-label="Drag to reorder task"
+                        role="button"
+                        tabIndex="-1"
+                        title="Drag to reorder"
+                    >
                         ⋮⋮
                     </span>
                 )}
