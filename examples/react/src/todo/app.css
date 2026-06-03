@@ -22,3 +22,28 @@ but useful for people who use screen readers */
 .toggle-all-label {
     pointer-events: none;
 }
+
+.drag-handle {
+    position: absolute;
+    left: 10px;
+    top: 0;
+    width: 20px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    color: #d9d9d9;
+    cursor: grab;
+    user-select: none;
+}
+
+.drag-handle:hover {
+    color: #4d4d4d;
+}
+
+li.dragging {
+    opacity: 0.5;
+}
+
+li.drop-target {
+    border: 2px solid #4d9fff;
+}

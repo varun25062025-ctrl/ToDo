@@ -1,4 +1,4 @@
-import { ADD_ITEM, UPDATE_ITEM, REMOVE_ITEM, TOGGLE_ITEM, REMOVE_ALL_ITEMS, TOGGLE_ALL, REMOVE_COMPLETED_ITEMS } from "./constants";
+import { ADD_ITEM, UPDATE_ITEM, REMOVE_ITEM, TOGGLE_ITEM, REMOVE_ALL_ITEMS, TOGGLE_ALL, REMOVE_COMPLETED_ITEMS, REORDER_ITEMS } from "./constants";
 
 /* Borrowed from https://github.com/ai/nanoid/blob/3.0.2/non-secure/index.js
 
@@ -42,6 +42,32 @@ function nanoid(size = 21) {
     return id;
 }
 
+function reorderVisibleTodos(state, visibleIds, draggedId, targetId) {
+    if (!draggedId || !targetId || draggedId === targetId)
+        return state;
+
+    const visibleOrder = visibleIds.filter((id) =>
+        state.some((todo) => todo.id === id)
+    );
+    const sourceIndex = visibleOrder.indexOf(draggedId);
+    const targetIndex = visibleOrder.indexOf(targetId);
+
+    if (sourceIndex === -1 || targetIndex === -1)
+        return state;
+
+    const nextVisibleOrder = visibleOrder.slice();
+    const [movedId] = nextVisibleOrder.splice(sourceIndex, 1);
+    nextVisibleOrder.splice(targetIndex, 0, movedId);
+
+    let visiblePointer = 0;
+    return state.map((todo) => {
+        if (!visibleOrder.includes(todo.id))
+            return todo;
+        const nextTodoId = nextVisibleOrder[visiblePointer++];
+        return state.find((item) => item.id === nextTodoId) || todo;
+    });
+}
+
 export const todoReducer = (state, action) => {
     switch (action.type) {
         case ADD_ITEM:
@@ -58,6 +84,13 @@ export const todoReducer = (state, action) => {
             return state.map((todo) => (todo.completed !== action.payload.completed ? { ...todo, completed: action.payload.completed } : todo));
         case REMOVE_COMPLETED_ITEMS:
             return state.filter((todo) => !todo.completed);
+        case REORDER_ITEMS:
+            return reorderVisibleTodos(
+                state,
+                action.payload.visibleIds,
+                action.payload.draggedId,
+                action.payload.targetId
+            );
     }
 
     throw Error(`Unknown action: ${action.type}`);

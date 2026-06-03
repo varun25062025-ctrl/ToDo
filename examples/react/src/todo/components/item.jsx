@@ -5,7 +5,7 @@ import { Input } from "./input";
 
 import { TOGGLE_ITEM, REMOVE_ITEM, UPDATE_ITEM } from "../constants";
 
-export const Item = memo(function Item({ todo, dispatch, index }) {
+export const Item = memo(function Item({ todo, dispatch, isDragging, isDropTarget, onDragStart, onDragOver, onDrop, onDragEnd }) {
     const [isWritable, setIsWritable] = useState(false);
     const { title, completed, id } = todo;
 
@@ -34,8 +34,25 @@ export const Item = memo(function Item({ todo, dispatch, index }) {
     );
 
     return (
-        <li className={classnames({ completed: todo.completed })} data-testid="todo-item">
+        <li
+            className={classnames({
+                completed: todo.completed,
+                dragging: isDragging,
+                "drop-target": isDropTarget
+            })}
+            data-testid="todo-item"
+            draggable={!isWritable}
+            onDragStart={() => onDragStart(id)}
+            onDragOver={(event) => onDragOver(event, id)}
+            onDrop={() => onDrop(id)}
+            onDragEnd={onDragEnd}
+        >
             <div className="view">
+                {!isWritable && (
+                    <span className="drag-handle" aria-hidden="true" title="Drag to reorder">
+                        ⋮⋮
+                    </span>
+                )}
                 {isWritable ? (
                     <Input onSubmit={handleUpdate} label="Edit Todo Input" defaultValue={title} onBlur={handleBlur} />
                 ) : (
