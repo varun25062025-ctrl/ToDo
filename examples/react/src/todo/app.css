@@ -22,3 +22,43 @@ but useful for people who use screen readers */
 .toggle-all-label {
     pointer-events: none;
 }
+
+/* Drag-and-drop styles */
+.drag-handle {
+    position: absolute;
+    left: 10px;
+    top: 0;
+    width: 20px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    color: #d9d9d9;
+    cursor: grab;
+    user-select: none;
+    font-size: 18px;
+}
+
+.drag-handle:hover {
+    color: #4d4d4d;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+li.dragging {
+    opacity: 0.5;
+}
+
+li.drop-target {
+    border: 2px solid #4d9fff;
+    background-color: #f9fcff;
+}
+
+.todo-list li {
+    position: relative;
+}
+
+.todo-list li .view {
+    padding-left: 35px;
+}
